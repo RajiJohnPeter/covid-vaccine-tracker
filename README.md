@@ -1,4 +1,4 @@
-# Covid Vaccine Trcaker
+# Covid Vaccine Tracker
 
 Problem Statement:
 
