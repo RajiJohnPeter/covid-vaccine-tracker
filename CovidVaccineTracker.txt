@@ -1,0 +1,60 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract CovidTracker{
+
+    address owner;    
+    constructor(){
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner(){
+        require(owner == msg.sender);
+        _;
+    }
+    struct hospital{
+        string vaccineRefId;
+        string vaccineName;
+    }
+    mapping(string=>hospital) public Hospital;
+
+    struct patient{
+        string name;
+        uint8 age;
+        string gender;
+        string idProof;
+        string dateOfVaccine;
+        uint8 doseNum;
+        string vacciName;
+    }
+    mapping(string=>patient) public Patient;
+
+    function addVaccineDose(string memory _name, uint8 _age, string memory _gender, 
+        string memory _idProof, string memory _DOV, uint8 _doseNum, string memory _vacciName) public onlyOwner{
+            require(Patient[_idProof].doseNum == 0, "Patient already given vaccine dose.");
+            Patient[_idProof].name = _name;
+            Patient[_idProof].age = _age;
+            Patient[_idProof].gender = _gender;
+            Patient[_idProof].idProof = _idProof;
+            Patient[_idProof].dateOfVaccine = _DOV;
+            Patient[_idProof].doseNum = _doseNum;
+            Patient[_idProof].vacciName = _vacciName;
+    }
+
+    function updateVaccineStatus(
+        string memory _idProof, string memory _DOV, uint8 _doseNum) public onlyOwner{
+            require(Patient[_idProof].doseNum < 2, "Patient vaccinated 2nd dose.");
+            if(Patient[_idProof].doseNum == 1){
+                Patient[_idProof].dateOfVaccine = _DOV;
+                Patient[_idProof].doseNum = _doseNum;
+            }           
+    }
+
+    function viewVaccineStatus(string memory _idProof) public view returns(
+        string memory _name, string memory _vacciName, uint8 _doseNum, string memory _DOV){
+            return(Patient[_idProof].name, 
+                   Patient[_idProof].vacciName,
+                   Patient[_idProof].doseNum, 
+                   Patient[_idProof].dateOfVaccine);
+    }
+}
